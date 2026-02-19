@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@layer components {
+  /* Контейнер страницы с мягким центрированием */
+  .page-container {
+    @apply max-w-6xl mx-auto px-4 py-8 min-h-screen bg-slate-50/50;
+  }
+
+  /* Улучшенная карточка с эффектом глубины */
+  .card-premium {
+    @apply bg-white rounded-3xl border border-slate-100 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+    hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300;
+  }
+
+  /* Стилизация заголовков */
+  .heading-primary {
+    @apply text-4xl font-black text-slate-900 tracking-tight;
+  }
+
+  /* Стилизация кнопок */
+  .btn-primary {
+    @apply bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold
+    hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-200;
+  }
+}

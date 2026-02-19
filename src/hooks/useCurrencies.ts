@@ -1,16 +1,11 @@
-﻿import { useState,  useEffect } from 'react';
-import type { Currency } from '../models/models.ts';
-import { Currencies } from '../api/agent.ts';
+﻿import { useQuery } from "@tanstack/react-query";
+import type { Currency } from "../models/models";
+import { Currencies } from "../api/agent";
 
 export const useCurrencies = () => {
-    const [data, setData] = useState<Currency[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        Currencies.listForAdmin()
-            .then(setData)
-            .finally(() => setLoading(false));
-    }, []);
-
-    return { data, loading}
-}
+    return useQuery<Currency[]>({
+        queryKey: ['currencies'],
+        queryFn: Currencies.listForAdmin,
+        staleTime: 1000 * 60 * 5 // 5 минут кэш
+    });
+};

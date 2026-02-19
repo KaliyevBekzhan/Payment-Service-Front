@@ -15,7 +15,7 @@ export const TransactionForm = ({ type, userAccount, onClose }: Props) => {
     const [amount, setAmount] = useState('');
     const [comment, setComment] = useState('');
     const [selectedCurrencyId, setSelectedCurrencyId] = useState<number>(1);
-    const { data: currencies } = useUserCurrencies(); // убрали неиспользуемый curLoading
+    const { data: currencies = [] } = useUserCurrencies();
     const queryClient = useQueryClient();
 
     const mutation = useMutation({

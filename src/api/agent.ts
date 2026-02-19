@@ -1,6 +1,12 @@
 ﻿import axios from 'axios'
 import type {Currency, Payment, Role, TopUp} from "../models/models.ts";
-import type {LoginResponse, MeResponse, MyCabinetResponse, RegistrationResponse} from "../responses/responses.ts";
+import type {
+    ActionResponse,
+    LoginResponse,
+    MeResponse,
+    MyCabinetResponse,
+    RegistrationResponse
+} from "../responses/responses.ts";
 
 const instance = axios.create({
     baseURL: 'http://localhost:5132/api/v1',
@@ -63,6 +69,9 @@ export const Payments = {
     info: (id: number) =>
         instance.get<Payment>(`/payments/${id}`)
         .then(res => res.data),
+    list: () =>
+        instance.get<ActionResponse[]>('/payments')
+            .then(res => res.data),
 }
 
 export const TopUps = {
@@ -72,10 +81,16 @@ export const TopUps = {
     info: (id: number) =>
         instance.get<TopUp>(`/topup/${id}`)
         .then(res => res.data),
+    list: () =>
+        instance.get<ActionResponse[]>('/topup')
+            .then(res => res.data)
 }
 
 export const User = {
     myCabinet: () =>
         instance.get<MyCabinetResponse>('/user')
+        .then(res => res.data),
+    history: () =>
+        instance.get<ActionResponse[]>('/user/history')
         .then(res => res.data)
 }

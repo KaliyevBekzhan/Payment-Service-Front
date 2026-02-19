@@ -10,11 +10,14 @@ export interface LoginResponse {
 }
 
 export interface ActionResponse {
+    id: number;
     originalAmount: number;
     currency: string;
     amountInTenge: number;
     status: string;
     comment: string;
+    transType?: string;
+    createdAt?: string;
 }
 
 export interface MeResponse {

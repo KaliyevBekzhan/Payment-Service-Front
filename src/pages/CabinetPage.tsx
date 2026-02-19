@@ -78,8 +78,8 @@ export const CabinetPage = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {data?.payments.map((p: ActionResponse, idx: number) => (
-                            <tr key={idx} className="group hover:bg-slate-50 transition-all cursor-default">
+                        {data?.payments.map((p: ActionResponse) => (
+                            <tr key={p.id}>
                                 <td className="px-4 py-4 rounded-l-2xl">
                                     <div className="flex items-center space-x-4">
                                         <div className="w-10 h-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-lg font-bold text-slate-500">

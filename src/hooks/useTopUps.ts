@@ -5,7 +5,11 @@ import type {ActionResponse} from "../responses/responses.ts";
 export const useTopUps = () => {
   return useQuery<ActionResponse[]>({
       queryKey: ['top-ups'],
-      queryFn: TopUps.list,
+      queryFn: () =>
+          TopUps.list({
+              pageNumber: 1,
+              pageSize: 10
+          }),
       staleTime: 1000 * 60 * 5
   })
 };

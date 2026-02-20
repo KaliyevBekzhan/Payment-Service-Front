@@ -1,17 +1,18 @@
 ﻿import { useState, useEffect } from 'react';
-import * as agent from '../api/agent';
-import { useUserCurrencies } from '../hooks/useUserCurrencies';
-import { CurrencySymbol } from '../components/ui/CurrencySymbol';
+import * as agent from '../../api/agent.ts';
+import { useUserCurrencies } from '../../hooks/useUserCurrencies.ts';
+import { CurrencySymbol } from '../ui/CurrencySymbol.tsx';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {Payment} from "../models/models.ts";
+import type {Payment} from "../../models/models.ts";
 
 interface Props {
     type: 'topup' | 'payment';
     userAccount: number;
     onClose: () => void;
+    onSuccess: () => void;
 }
 
-export const TransactionForm = ({ type, userAccount, onClose }: Props) => {
+export const TransactionForm = ({ type, userAccount, onClose, onSuccess }: Props) => {
     const [amount, setAmount] = useState('');
     const [comment, setComment] = useState('');
     const [selectedCurrencyId, setSelectedCurrencyId] = useState<number>(1);
@@ -26,7 +27,8 @@ export const TransactionForm = ({ type, userAccount, onClose }: Props) => {
             return agent.TopUps.create(payload);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['my-cabinet'] });
+            queryClient.invalidateQueries({ queryKey: ['myCabinet'] });
+            onSuccess?.(); // если хочешь оставить callback
             onClose();
         }
     });

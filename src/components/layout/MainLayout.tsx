@@ -21,7 +21,7 @@ export const MainLayout: React.FC<LayoutProps> = ({
             ]
             : [
                 { name: "Мой кабинет", icon: "🏠", path: "/cabinet" },
-                { name: "Пополнить", icon: "💳", path: "/top-up" },
+                { name: "Пополнения", icon: "💳", path: "/top-up" },
                 { name: "Платежи", icon: "💰", path: "/payments" }, // 👈 добавили
                 { name: "История", icon: "📜", path: "/history" }
             ];
@@ -86,7 +86,6 @@ export const MainLayout: React.FC<LayoutProps> = ({
                             ➔
                         </span>
                     </button>
-
                     <div className="mt-4 text-[10px] text-slate-600 text-center font-bold tracking-widest uppercase">
                         v.1.0.4 secure
                     </div>

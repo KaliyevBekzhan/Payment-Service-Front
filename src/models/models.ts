@@ -65,3 +65,8 @@ export interface Registration {
     password: string;
     name: string;
 }
+
+export interface Pagination {
+    pageNumber: number;
+    pageSize: number;
+}

@@ -1,23 +1,43 @@
-﻿import { useQuery } from "@tanstack/react-query";
-import * as agent from "../api/agent";
-import { StatusBadge } from "../components/ui/StatusBadge";
-import type { ActionResponse } from "../responses/responses.ts";
+﻿import { useInfiniteQuery } from "@tanstack/react-query";
+import * as agent from "../../api/agent.ts";
+import { StatusBadge } from "../../components/ui/StatusBadge.tsx";
+import type { ActionResponse } from "../../responses/responses.ts";
 
 export const HistoryPage = () => {
 
-    const { data = [], isLoading, isError } = useQuery<ActionResponse[]>({
+    const PAGE_SIZE = 10;
+
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useInfiniteQuery<ActionResponse[]>({
         queryKey: ['history'],
-        queryFn: agent.User.history
+        initialPageParam: 1,
+        queryFn: ({ pageParam }) =>
+            agent.User.history({
+                pageNumber: pageParam as number,
+                pageSize: PAGE_SIZE
+            }),
+        getNextPageParam: (lastPage, pages) => {
+            if (lastPage.length < PAGE_SIZE) return undefined;
+            return pages.length + 1;
+        }
     });
 
     if (isLoading) return <div className="p-6">Загрузка истории...</div>;
     if (isError) return <div className="p-6 text-red-500">Ошибка загрузки истории</div>;
 
-    const totalIncome = data
+    const flatData = data?.pages.flat() ?? [];
+
+    const totalIncome = flatData
         .filter(x => x.originalAmount > 0)
         .reduce((sum, x) => sum + x.amountInTenge, 0);
 
-    const totalExpense = data
+    const totalExpense = flatData
         .filter(x => x.originalAmount < 0)
         .reduce((sum, x) => sum + x.amountInTenge, 0);
 
@@ -34,7 +54,7 @@ export const HistoryPage = () => {
                         Всего операций
                     </p>
                     <p className="text-3xl font-black">
-                        {data.length}
+                        {flatData.length}
                     </p>
                 </div>
 
@@ -74,7 +94,7 @@ export const HistoryPage = () => {
                     </thead>
 
                     <tbody>
-                    {data.map((t) => {
+                    {flatData.map((t) => {
 
                         const isPositive = t.originalAmount > 0;
 
@@ -107,14 +127,14 @@ export const HistoryPage = () => {
                                 </td>
 
                                 <td
-                                    className={`p-4 text-right font-bold
-                                            ${isPositive
-                                        ? "text-emerald-600"
-                                        : "text-red-600"
+                                    className={`p-4 text-right font-bold ${
+                                        isPositive
+                                            ? "text-emerald-600"
+                                            : "text-red-600"
                                     }`}
                                 >
                                     {isPositive ? "▲" : "▼"}{" "}
-                                    {Math.abs(t.amountInTenge).toLocaleString()} ₸
+                                    {t.amountInTenge.toLocaleString()} ₸
                                 </td>
 
                             </tr>
@@ -123,6 +143,20 @@ export const HistoryPage = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* LOAD MORE */}
+            {hasNextPage && (
+                <div className="flex justify-center p-6">
+                    <button
+                        onClick={() => fetchNextPage()}
+                        disabled={isFetchingNextPage}
+                        className="px-6 py-3 bg-black text-white rounded-xl disabled:opacity-50"
+                    >
+                        {isFetchingNextPage ? "Загрузка..." : "Загрузить ещё"}
+                    </button>
+                </div>
+            )}
+
         </div>
     );
 };

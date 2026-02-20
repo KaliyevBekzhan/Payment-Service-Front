@@ -1,17 +1,22 @@
 ﻿import axios from 'axios'
-import type {Currency, Payment, Role, TopUp} from "../models/models.ts";
+import type {Currency, Pagination, Payment, Role} from "../models/models.ts";
 import type {
     ActionResponse,
     LoginResponse,
     MeResponse,
-    MyCabinetResponse,
+    MyCabinetResponse, PaymentForAdminResponse, PaymentsForAdminResponse,
     RegistrationResponse
 } from "../responses/responses.ts";
+import {createHmacInterceptor} from "./hmacSimple.ts";
 
 const instance = axios.create({
     baseURL: 'http://localhost:5132/api/v1',
     withCredentials: true
 });
+
+instance.interceptors.request.use(
+    createHmacInterceptor(() => "my-dev-secret")
+);
 
 export const Currencies = {
     listForAdmin: () =>
@@ -35,7 +40,7 @@ export const Currencies = {
 };
 
 export const Roles = {
-    list: () => instance.get('/admin/roles')
+    list: () => instance.get<Role[]>('/admin/roles')
         .then(res => res.data),
     details: (id: number) => instance.get(`/admin/roles/${id}`)
         .then(res => res.data),
@@ -67,10 +72,21 @@ export const Payments = {
         instance.post<Payment>('/payments', payment)
             .then(res => res.data),
     info: (id: number) =>
-        instance.get<Payment>(`/payments/${id}`)
+        instance.get<ActionResponse>(`/payments/${id}`)
         .then(res => res.data),
-    list: () =>
-        instance.get<ActionResponse[]>('/payments')
+    list: (page: Pagination) =>
+        instance.get<ActionResponse[]>('/payments', {params: page})
+            .then(res => res.data),
+    accept: (id: number) =>
+        instance.post<void>(`admin/payments/${id}/accept`)
+        .then(res => res.data),
+    decline: (id: number) =>
+        instance.post<void>(`admin/payments/${id}/decline`)
+        .then(res => res.data),
+    listForAdmin: () => instance.get<PaymentsForAdminResponse[]>('/admin/payments')
+        .then(res => res.data),
+    infoForAdmin: (id: number) =>
+        instance.get<PaymentForAdminResponse>(`/admin/payments/${id}`)
             .then(res => res.data),
 }
 
@@ -79,10 +95,10 @@ export const TopUps = {
         instance.post<void>(`/topup/`, payment)
             .then(res => res.data),
     info: (id: number) =>
-        instance.get<TopUp>(`/topup/${id}`)
+        instance.get<ActionResponse>(`/topup/${id}`)
         .then(res => res.data),
-    list: () =>
-        instance.get<ActionResponse[]>('/topup')
+    list: (page: Pagination) =>
+        instance.get<ActionResponse[]>('/topup', {params: page})
             .then(res => res.data)
 }
 
@@ -90,7 +106,7 @@ export const User = {
     myCabinet: () =>
         instance.get<MyCabinetResponse>('/user')
         .then(res => res.data),
-    history: () =>
-        instance.get<ActionResponse[]>('/user/history')
-        .then(res => res.data)
+    history: (page: Pagination) =>
+        instance.get<ActionResponse[]>('/user/history', { params: page })
+            .then(res => res.data)
 }

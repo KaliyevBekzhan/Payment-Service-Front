@@ -5,7 +5,6 @@ import type {
     LoginResponse,
     MeResponse,
     MyCabinetResponse, PaymentForAdminResponse, PaymentsForAdminResponse,
-    RegistrationResponse
 } from "../responses/responses.ts";
 import {createHmacInterceptor} from "./hmacSimple.ts";
 
@@ -58,7 +57,7 @@ export const Auth = {
         instance.post<LoginResponse>('/auth/login', credentials)
         .then(res => res.data),
     register: (registration: {iin: string, password: string, name: string}) =>
-        instance.post<RegistrationResponse>('/auth/register', registration)
+        instance.post<LoginResponse>('/auth/register', registration)
         .then(res => res.data),
     logout: () =>
         instance.post<void>('/auth/logout'),
